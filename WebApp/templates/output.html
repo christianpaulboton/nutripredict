@@ -1,0 +1,174 @@
+{% load static %}
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nutripredict</title>
+    <link rel="icon" type="image/x-icon" href="{% static 'images/favicon.ico' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'css/style.css' %}">
+    <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.7.0/chart.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" integrity="sha512-DTOQO9RWCH3ppGqcWaEA1BIZOC6xxalwEsw9c2QQeAIftl+Vegovlnee1c9QX4TctnWMn13TZye+giMm8e2LwA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+</head>
+<body>
+  <header class="all_header">
+    <nav> 
+        <ul class='nav-bar'>
+            <li class='logo'><a href='#'><img src="{% static 'images/logo_white.png' %}" alt="Logo" class="logo"></a>
+            <h2>NUTRIPREDICT</h2>
+            </li>
+            <input type='checkbox' id='check' />
+            <span class="menu">
+                <li><a href="{% url 'home' %}"><i class="fa-solid fa-home"></i> HOME</a></li>
+                <li><a href="{% url 'dashboard' %}"><i class="fa-solid fa-table-columns"></i> Dashboard</a></li>
+                <li><a class="active" href=""><i class="fa-solid fa-chart-simple"></i> Result</a></li>
+                <li><a href="{% url 'about' %}"><i class="fa-solid fa-circle-info"></i> About</a></li>
+                <li><a href="{% url 'our_team' %}"><i class="fa-solid fa-people-group"></i> Our Team</a></li>
+                <li><a href="{% url 'contact_us' %}"><i class="fa-solid fa-address-book"></i> Contact Us</a></li>
+                <li><a href="#" id="logout-link"><i class="fa-solid fa-right-to-bracket"></i>  Log Out</a></li>
+                <label for="check" class="close-menu"><i class="fas fa-times"></i></label>
+            </span>
+            <label for="check" class="open-menu"><i class="fas fa-bars"></i></label>
+        </ul>
+    </nav>
+</header>
+  <div class="wrapper1_container">
+  <div class="predict_container">
+    <div class="output_close-button" onclick="closeOutputContainer()">
+      <i class="fa-brands fa-xbox"></i>
+    </div>
+    <div class="personal-info">
+        <label for="name">Name:</label>
+        <input type="text" id="name" readonly value="{{ name }}">
+        <label for="sex">Sex:</label>
+        <input type="text" id="sex" readonly value="{{ sex }}">
+        <label for="age">Age:</label>
+        <input type="text" id="age" readonly value="{{ age }}">
+        <label for="weight">Weight:</label>
+        <input type="text" id="weight" readonly value="{{ weight }}">
+        <label for="height">Height:</label>
+        <input type="text" id="height" readonly value="{{ height }}">
+    </div>
+    <label for="result">Prediction Result</label>
+    <input type="text" id="resultField" readonly placeholder="Result: {{ result }}">
+    <div class="graph_result" id="graphField">
+        <div class="canvas_graph">
+            <canvas id="myChart"></canvas>
+        </div>
+        <div class="out_graph1">
+          <p class="disclaimer"><i class="fas fa-exclamation-triangle" style="font-size: 1.2rem;"></i> {{ disclaimer }}</p>
+        </div>
+    </div>
+</div>
+</div>
+
+ <!-- FOOTER DESIGN -->
+  <footer>
+    <div class="footer_bottom">
+          <p class="copyright">&copy; 2024 Nutripredict</p>
+    </div>
+</footer>
+</body>
+</html>
+
+
+<script>
+function closeOutputContainer() {
+    window.location.href = '{% url 'predict_view' %}';
+}
+
+function updateChart(labels, data) {
+  var ctx = document.getElementById('myChart').getContext('2d');
+  var myChart = new Chart(ctx, {
+    type: 'bar',
+    data: {
+      labels: labels,
+      datasets: [{
+        label: 'Predicted Nutritional Status Probabilities',
+        data: data,
+        backgroundColor: getColorByStatus(labels),
+        borderColor: 'rgba(75, 192, 192, 1)',
+        borderWidth: 1
+      }]
+    },
+    options: {
+      scales: {
+        y: {
+          beginAtZero: true
+        }
+      }
+    }
+  });
+
+  const labelElement = document.querySelector('.predicted-label');
+  const colorMap = {
+    'Moderately Wasted': 'rgba(255, 215, 0, 0.9)',
+    'Normal': 'rgba(0, 128, 0, 0.9)',
+    'Over Weight': 'rgba(255, 165, 0, 0.9)',
+    'Obese': 'rgba(255, 0, 0, 0.9)',
+    'Severely Wasted': 'rgba(128, 0, 0, 0.9)'
+  };
+
+  labelElement.style.color = colorMap[predicted_Labels[data.indexOf(Math.max(...data))]] || 'rgba(128, 128, 128, 0.9)';
+}
+
+function getColorByStatus(labels) {
+  const colorMap = {
+    'Moderately Wasted': 'rgba(255, 215, 0, 0.9)',
+    'Normal': 'rgba(0, 128, 0, 0.9)',
+    'Over Weight': 'rgba(255, 165, 0, 0.9)',
+    'Obese': 'rgba(255, 0, 0, 0.9)',
+    'Severely Wasted': 'rgba(128, 0, 0, 0.9)'
+  };
+  return labels.map(label => colorMap[label] || 'rgba(128, 128, 128, 0.9)');
+}
+
+document.addEventListener('DOMContentLoaded', function () {
+
+  var predicted_Labels = ['Moderately Wasted', 'Normal', 'Over Weight', 'Obese', 'Severely Wasted'];
+  var predicted_Data = {{ probabilities|safe }}; 
+
+  updateChart(predicted_Labels, predicted_Data);
+});
+  
+
+  //LOG OUT CODE
+  document.getElementById('logout-link').addEventListener('click', function(event) {
+      event.preventDefault();
+      var confirmed = confirm('Are you sure you want to log out?');
+      if (confirmed) {
+          fetch('/logout/', {
+              method: 'POST',
+              headers: {
+                  'X-CSRFToken': getCookie('csrftoken')
+              },
+          })
+          .then(response => {
+              if (response.ok) {
+                  window.location.href = '/login/';
+              } else {
+                  console.error('Logout failed:', response.statusText);
+              }
+          })
+          .catch(error => {
+              console.error('Network error occurred:', error);
+          });
+      }
+  });
+  function getCookie(name) {
+      let cookieValue = null;
+      if (document.cookie && document.cookie !== '') {
+          const cookies = document.cookie.split(';');
+          for (let i = 0; i < cookies.length; i++) {
+              const cookie = cookies[i].trim();
+              if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                  cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                  break;
+              }
+          }
+      }
+      return cookieValue;
+  }
+  </script>

@@ -1,0 +1,134 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nutripredict</title>
+    <link rel="icon" type="image/x-icon" href="{% static 'images/favicon.ico' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'css/style.css' %}">
+    <script src="https://code.jquery.com/jquery-3.6.3.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" integrity="sha512-DTOQO9RWCH3ppGqcWaEA1BIZOC6xxalwEsw9c2QQeAIftl+Vegovlnee1c9QX4TctnWMn13TZye+giMm8e2LwA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+</head>
+<body>
+  <header class="all_header">
+    <nav> 
+        <ul class='nav-bar'>
+            <li class='logo'><a href='#'><img src="{% static 'images/logo_white.png' %}" alt="Logo" class="logo"></a>
+            <h2>NUTRIPREDICT</h2>
+            </li>
+            <input type='checkbox' id='check' />
+            <span class="menu">
+                <li><a href="{% url 'home' %}"><i class="fa-solid fa-home"></i> HOME</a></li>
+                <li><a href="{% url 'dashboard' %}"><i class="fa-solid fa-table-columns"></i> Dashboard</a></li>
+                <li><a href="{% url 'predict_view' %}"><i class="fa-solid fa-chart-simple"></i> Prediction</a></li>
+                <li><a href="{% url 'about' %}"><i class="fa-solid fa-circle-info"></i> About</a></li>
+                <li><a href="{% url 'our_team' %}"><i class="fa-solid fa-people-group"></i> Our Team</a></li>
+                <li><a class="active" href="{% url 'contact_us' %}"><i class="fa-solid fa-address-book"></i> Contact Us</a></li>
+                <li><a href="#" id="logout-link"><i class="fa-solid fa-right-to-bracket"></i>  Log Out</a></li>
+                <label for="check" class="close-menu"><i class="fas fa-times"></i></label>
+            </span>
+            <label for="check" class="open-menu"><i class="fas fa-bars"></i></label>
+        </ul>
+    </nav>
+</header>
+    <div class="contact_us_page">
+    <div class="contact-us">
+      <h1>Contact Us</h1>
+      <p>We appreciate your interest in Nutripredict! Feel free to reach out to us using the form below or any of the methods listed. We're here to answer your questions and support you in any way we can.</p>
+      <form id="myForm" action="https://formspree.io/f/xqkrablp" method="POST">
+        <div class="form-group">
+          <label for="name">Your Name:</label>
+          <input type="text" id="name" name="name" required>
+        </div>
+        <div class="form-group">
+          <label for="email">Email Address:</label>
+          <input type="email" id="email" name="email" required>
+        </div>
+        <div class="form-group">
+          <label for="message">Message:</label>
+          <textarea id="message" name="message" rows="5" required></textarea>
+        </div>
+        <button type="submit">Send Message</button>
+      </form>
+
+      <div class="contact-info">
+        <h2>Other Contact Options</h2>
+        <ul class="contact-list">
+          <li>
+            <span class="contact-icon">
+              <i class="fas fa-envelope"></i>
+            </span>
+            <a href="mailto:support@nutripredict.com">support@nutripredict.com</a>
+          </li>
+          <li>
+            <span class="contact-icon">
+              <i class="fas fa-phone"></i>
+            </span>
+            <a href="tel:+639055591347">+63 905 559 1347</a>
+          </li>
+          <li>
+            <span class="contact-icon">
+              <i class="fas fa-map-marker-alt"></i>
+            </span>
+            <a href="https://www.google.com/maps/place/Bohol+Island+State+University/@9.9634621,124.0264876,17z/data=!4m6!3m5!1s0x33aa24318d000001:0x2eae5e592253ae7a!8m2!3d9.9635944!4d124.0256761!16s%2Fg%2F11kj8_zs5d?entry=ttu" target="_blank">Clarin, Bohol, Philippines</a>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </div>
+ <footer>
+    <div class="footer_bottom">
+        <p class="copyright">&copy; 2024 Nutripredict</p>
+    </div>
+</footer>
+</body>
+</html>
+
+<script>
+  document.getElementById('logout-link').addEventListener('click', function(event) {
+    event.preventDefault();
+    var confirmed = confirm('Are you sure you want to log out?');
+    if (confirmed) {
+        fetch('/logout/', {
+            method: 'POST',
+            headers: {
+                'X-CSRFToken': getCookie('csrftoken')
+            },
+        })
+        .then(response => {
+            if (response.ok) {
+                window.location.href = '/login/';
+            } else {
+                console.error('Logout failed:', response.statusText);
+            }
+        })
+        .catch(error => {
+            console.error('Network error occurred:', error);
+        });
+    }
+});
+function getCookie(name) {
+    let cookieValue = null;
+    if (document.cookie && document.cookie !== '') {
+        const cookies = document.cookie.split(';');
+        for (let i = 0; i < cookies.length; i++) {
+            const cookie = cookies[i].trim();
+            if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                break;
+            }
+        }
+    }
+    return cookieValue;
+}
+
+document.getElementById('myForm').addEventListener('submit', function(event) {
+  event.preventDefault();
+  this.submit();
+  document.getElementById('name').value = '';
+  document.getElementById('email').value = '';
+  document.getElementById('message').value = '';
+});
+
+</script>

@@ -1,0 +1,133 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nutripredict</title>
+    <link rel="icon" type="image/x-icon" href="{% static 'images/favicon.ico' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'css/style.css' %}">
+    <script src="https://code.jquery.com/jquery-3.6.3.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" integrity="sha512-DTOQO9RWCH3ppGqcWaEA1BIZOC6xxalwEsw9c2QQeAIftl+Vegovlnee1c9QX4TctnWMn13TZye+giMm8e2LwA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+</head>
+<body>
+    <header class="all_header">
+        <nav> 
+            <ul class='nav-bar'>
+                <li class='logo'><a href='#'><img src="{% static 'images/logo_white.png' %}" alt="Logo" class="logo"></a>
+                <h2>NUTRIPREDICT</h2>
+                </li>
+                <input type='checkbox' id='check' />
+                <span class="menu">
+                    <li><a href="{% url 'home' %}"><i class="fa-solid fa-home"></i> HOME</a></li>
+                    <li><a href="{% url 'dashboard' %}"><i class="fa-solid fa-table-columns"></i> Dashboard</a></li>
+                    <li><a href="{% url 'predict_view' %}"><i class="fa-solid fa-chart-simple"></i> Prediction</a></li>
+                    <li><a class="active" href="{% url 'about' %}"><i class="fa-solid fa-circle-info"></i> About</a></li>
+                    <li><a href="{% url 'our_team' %}"><i class="fa-solid fa-people-group"></i> Our Team</a></li>
+                    <li><a href="{% url 'contact_us' %}"><i class="fa-solid fa-address-book"></i> Contact Us</a></li>
+                    <li><a href="#" id="logout-link"><i class="fa-solid fa-right-to-bracket"></i>  Log Out</a></li>
+                    <label for="check" class="close-menu"><i class="fas fa-times"></i></label>
+                </span>
+                <label for="check" class="open-menu"><i class="fas fa-bars"></i></label>
+            </ul>
+        </nav>
+    </header>
+<div class="about_css">
+    <div class="heading">
+        <h1>About Us</h1>
+        <p>Explore our website, discover the impact, and join us in making a difference!</p>
+    </div>
+    <div class="container">
+        <section class="about">
+            <div class="about-image">
+                <img src="{% static 'images/logo_black.png' %}" alt="Logo Image" class="logo">
+            </div>
+        <div class="about_content">
+                <h2>Nutripredict Know your nutritional future</h2>
+                <p>Welcome to Nutripredict, a visionary platform dedicated to shaping the future of children's health through predictive data analytics. At Nutripredict, we believe in the power of data to transform lives, and our mission is to pioneer innovations in nutritional forecasting.
+                    Our journey began with a shared passion using technology to address critical issues in child nutrition. We believe that every child deserves a healthy start, and Nutripredict is our commitment to making this vision a reality.
+                    With a team of dedicated professionals and experts in nutrition, data science, and technology, we embark on a mission to revolutionize how we approach childhood nutrition. Our data-driven approach allows us to predict and prevent nutritional deficiencies, enabling proactive interventions for a healthier and happier future. 
+                    Join us in this incredible journey towards a healthier tomorrow!
+                </p>
+            <div id="more-content" class="hidden">
+                <h2>How It Works</h2>
+                <p>Nutripredict uses machine learning, specifically data mining and predictive analysis, to learn from a lot of information about children's health. You can enter information about a child, and Nutripredict will try to predict their nutritional status.</p>
+                <h2>Disclaimer</h2>
+                <ul class="disclaimer-list">
+                    <li><p>Nutripredict uses data mining techniques to make predictions, and these predictions may not be perfect.</p></li>
+                    <li><p>Nutripredict saves information about your child for predictions, which may include: name, age, weight, height, and nutritional status predictions. We will always protect your child's information.</p></li>
+                    <li><p>Nutripredict is a tool that can help professionals. It should not replace professional advice or treatment for your child. Always talk to a professional about any questions you have about your child's nutrition.</p></li>
+                    <li><p>By using Nutripredict, you agree to these terms.</p></li>
+                </ul>
+                <h2>Working Together for a Healthy Future</h2>
+                <p>Nutripredict wants to help create a healthy future for all children. With this web app, nutritionists, parents, and professionals can make better decisions and give the best care possible to young children.</p>
+            </div>
+        <a href="" class="read-more">Readmore</a>
+        </div>
+         </section>
+    </div>
+</div>
+ <!-- FOOTER DESIGN -->
+ <footer>
+    <div class="footer_bottom">
+        <p class="copyright">&copy; 2024 Nutripredict</p>
+    </div>
+</footer>
+</body>
+</html>
+
+
+<script>
+
+//READ MORE
+    $(document).ready(function() {
+        if (typeof $ !== 'undefined') {
+          $(".read-more").click(function(event) {
+            event.preventDefault();
+            $("#more-content").toggleClass("hidden");
+            var buttonText = $(this).text();
+            $(this).text(buttonText === "See Less" ? "Read More" : "See Less");
+          });
+        } else {
+          console.error("jQuery not loaded. Please ensure jQuery is included in your template.");
+        }
+      });
+
+//LOG OUT CODE
+    document.getElementById('logout-link').addEventListener('click', function(event) {
+        event.preventDefault();
+        var confirmed = confirm('Are you sure you want to log out?');
+        if (confirmed) {
+            fetch('/logout/', {
+                method: 'POST',
+                headers: {
+                    'X-CSRFToken': getCookie('csrftoken')
+                },
+            })
+            .then(response => {
+                if (response.ok) {
+                    window.location.href = '/login/';
+                } else {
+                    console.error('Logout failed:', response.statusText);
+                }
+            })
+            .catch(error => {
+                console.error('Network error occurred:', error);
+            });
+        }
+    });
+    function getCookie(name) {
+        let cookieValue = null;
+        if (document.cookie && document.cookie !== '') {
+            const cookies = document.cookie.split(';');
+            for (let i = 0; i < cookies.length; i++) {
+                const cookie = cookies[i].trim();
+                if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                    cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                    break;
+                }
+            }
+        }
+        return cookieValue;
+    }
+</script>

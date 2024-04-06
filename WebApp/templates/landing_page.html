@@ -1,0 +1,32 @@
+{% load static %}
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nutripredict</title>
+    <link rel="icon" type="image/x-icon" href="{% static 'images/favicon.ico' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'css/style.css' %}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" integrity="sha512-DTOQO9RWCH3ppGqcWaEA1BIZOC6xxalwEsw9c2QQeAIftl+Vegovlnee1c9QX4TctnWMn13TZye+giMm8e2LwA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+</head>
+<body>
+    <div class="home_container">
+      <div class="images">
+          <img src="{% static 'images/logo_white.png' %}" alt="Logo Image" class="logo">
+      </div>
+
+      <div class="second_home_container">
+          <div class="welcome">
+            <h1 data-text="Nutripredict..">Nutripredict..</h1>
+          </div>
+          <div class="slogan">
+              <h2>Predicting and Forecasting Childrens' Future Nutritional Status</h2>
+          </div>
+          <div class="log_button">
+            <a href="{% url 'login' %}"><button class="button">LOG IN</button></a>
+            </div>
+      </div>
+    </div>
+
+</body>
+</html>

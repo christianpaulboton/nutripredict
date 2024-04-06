@@ -1,0 +1,139 @@
+{% load static %}
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nutripredict</title>
+    <link rel="icon" type="image/x-icon" href="{% static 'images/favicon.ico' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'css/style.css' %}">
+    <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.5/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.5/firebase-database.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" integrity="sha512-DTOQO9RWCH3ppGqcWaEA1BIZOC6xxalwEsw9c2QQeAIftl+Vegovlnee1c9QX4TctnWMn13TZye+giMm8e2LwA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+</head>
+<body>
+    <header class="all_header">
+        <nav> 
+            <ul class='nav-bar'>
+                <li class='logo'><a href='#'><img src="{% static 'images/logo_white.png' %}" alt="Logo" class="logo"></a>
+                <h2>NUTRIPREDICT</h2>
+                </li>
+                <input type='checkbox' id='check' />
+                <span class="menu">
+                    <li><a href="{% url 'home' %}"><i class="fa-solid fa-home"></i> HOME</a></li>
+                    <li><a href="{% url 'dashboard' %}"><i class="fa-solid fa-table-columns"></i> Dashboard</a></li>
+                    <li><a class="active" href="{% url 'predict_view' %}"><i class="fa-solid fa-chart-simple"></i> Prediction</a></li>
+                    <li><a href="{% url 'about' %}"><i class="fa-solid fa-circle-info"></i> About</a></li>
+                    <li><a href="{% url 'our_team' %}"><i class="fa-solid fa-people-group"></i> Our Team</a></li>
+                    <li><a href="{% url 'contact_us' %}"><i class="fa-solid fa-address-book"></i> Contact Us</a></li>
+                    <li><a href="#" id="logout-link"><i class="fa-solid fa-right-to-bracket"></i>  Log Out</a></li>
+                    <label for="check" class="close-menu"><i class="fas fa-times"></i></label>
+                </span>
+                <label for="check" class="open-menu"><i class="fas fa-bars"></i></label>
+            </ul>
+        </nav>
+    </header>
+    <div class="predict_container-wrapper">
+        <div class="predict_home_container">
+            <img src="{% static 'images/logo_white.png' %}" alt="Logo" class="logo">
+            <h1>Nutritional Status Predictor  </h1>
+            <form id="prediction-form" method="post" action="{% url 'predict_view' %}">
+                {% csrf_token %}
+                <label for="name">Child's Name</label>
+                <input type="text" id="name" name="name" required placeholder="Please input child's name" pattern="[A-Za-z ]+">  
+            
+                <label for="sex">Sex</label>
+                <select id="sex" name="sex" required class="sex">
+                        <option value="" disabled selected>Select gender</option>
+                    <option value="male">Male</option>
+                    <option value="female">Female</option>
+                </select>
+        
+                <label for="age">Age in months</label>
+                <input type="number" id="age" name="age" required placeholder="Please input age in months" min="0" max="60">
+                
+                <label for="weight">Weight (kg) </label>
+                <input type="number" id="weight" name="weight" required placeholder="Please input in kilograms" min="1" max="40" step="any" >
+                
+                <label for="height">Height (cm) </label>
+                <input type="number" id="height" name="height"required placeholder="Please input in centimeters" min="30" max="130" step="any" onchange="validateHeight(this.value)">
+                
+                <button type="submit" id="predict-button" class="predict_button">Predict</button>
+                <button type="reset" onclick="clearForm()">Clear</button>
+            </form>
+        </div>        
+    </div>
+
+ <!-- FOOTER DESIGN -->
+<footer>
+    <div class="footer_bottom">
+        <p class="copyright">&copy; 2024 Nutripredict</p>
+    </div>
+</footer>
+</body>
+</html>
+
+
+
+<script>
+    function validateHeight(heightValue) {
+  const minHeight = 40;
+  const maxHeight = 125;
+
+  if (heightValue < minHeight || heightValue > maxHeight) {
+    const confirmResult = confirm(`The number you entered (${heightValue}) is outside the expected range (${minHeight}-${maxHeight}). Do you want to continue?`);
+    if (!confirmResult) {
+      document.getElementById("height").focus();
+      return false; // Prevent default form submission
+    }
+  }
+  return true; // Allow form submission
+    }
+//LOG OUT CODE
+document.getElementById('logout-link').addEventListener('click', function(event) {
+    event.preventDefault();
+    var confirmed = confirm('Are you sure you want to log out?');
+    if (confirmed) {
+        fetch('/logout/', {
+            method: 'POST',
+            headers: {
+                'X-CSRFToken': getCookie('csrftoken')
+            },
+        })
+        .then(response => {
+            if (response.ok) {
+                window.location.href = '/login/';
+            } else {
+                console.error('Logout failed:', response.statusText);
+            }
+        })
+        .catch(error => {
+            console.error('Network error occurred:', error);
+        });
+    }
+});
+function getCookie(name) {
+    let cookieValue = null;
+    if (document.cookie && document.cookie !== '') {
+        const cookies = document.cookie.split(';');
+        for (let i = 0; i < cookies.length; i++) {
+            const cookie = cookies[i].trim();
+            if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                break;
+            }
+        }
+    }
+    return cookieValue;
+}
+
+// CLEAR FORM
+    function clearForm() {
+        document.getElementById('name').value = '';
+        document.getElementById('sex').value = '';
+        document.getElementById('age').value = '';
+        document.getElementById('weight').value = '';
+        document.getElementById('height').value = '';
+    }
+</script>
